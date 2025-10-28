@@ -1,11 +1,17 @@
-const API_URL = "https://grade-analyzer.vercel.app/api/analyze"; // ← Vercel 后端
-const uploadBtn = document.getElementById("uploadBtn");
 const fileInput = document.getElementById("fileInput");
+const fileNameSpan = document.getElementById("fileName");
+const uploadBtn = document.getElementById("uploadBtn");
 const resultDiv = document.getElementById("result");
 
-// 指向你 Vercel 后端的 API
+// 替换为你自己的 Vercel 后端地址
 const API_URL = "https://grade-analyzer.vercel.app/api/analyze";
 
+// 显示选择文件的名称
+fileInput.addEventListener("change", () => {
+  fileNameSpan.textContent = fileInput.files[0]?.name || "";
+});
+
+// 上传并分析
 uploadBtn.addEventListener("click", async () => {
   const file = fileInput.files[0];
   if (!file) {
@@ -25,7 +31,7 @@ uploadBtn.addEventListener("click", async () => {
     });
 
     if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
+      throw new Error(`HTTP 错误! 状态: ${res.status}`);
     }
 
     const data = await res.json();
@@ -42,7 +48,7 @@ uploadBtn.addEventListener("click", async () => {
       <p>数学达标人数：${data.summary.math}</p>
       <p>语文达标人数：${data.summary.chinese}</p>
       <p>英语达标人数：${data.summary.english}</p>
-      <p>三科全部达标人数：${data.summary.all}</p>
+      <p>三科达标人数：${data.summary.all}</p>
     `;
 
     // 绘制图表
@@ -65,4 +71,3 @@ uploadBtn.addEventListener("click", async () => {
     resultDiv.innerHTML = `<p>上传或分析时出错：${err.message}</p>`;
   }
 });
-
