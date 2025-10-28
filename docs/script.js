@@ -7,7 +7,7 @@ fileInput.addEventListener("change", () => {
   fileNameSpan.textContent = fileInput.files[0]?.name || "";
 });
 
-const API_URL = "https://grade-analyzer.vercel.app/api/analyze"; // 线上 Vercel 后端地址
+const API_URL = "https://grade-analyzer.vercel.app/api/analyze";
 
 uploadBtn.addEventListener("click", async () => {
   const file = fileInput.files[0];
@@ -19,30 +19,31 @@ uploadBtn.addEventListener("click", async () => {
 
   try {
     const res = await fetch(API_URL, { method: "POST", body: formData });
-    const data = await res.json();
+    const json = await res.json();
+    if (!json.data) throw new Error("格式错误");
 
-    if (!data.summary) {
-      resultDiv.innerHTML = "<p>分析失败，请检查文件格式。</p>";
-      return;
-    }
+    /* 渲染容斥结果 */
+    let html = "<h3>容斥原理计算结果</h3><table border='1' cellpadding='6'>";
+    html += "<tr><th>达标组合</th><th>人数</th><th>学生名单</th></tr>";
+    json.data.forEach((item) => {
+      html += `<tr>
+                 <td>${item.combo}</td>
+                 <td>${item.count}</td>
+                 <td>${item.students.join("、") || "无"}</td>
+               </tr>`;
+    });
+    html += "</table>";
+    resultDiv.innerHTML = html;
 
-    resultDiv.innerHTML = `
-      <h3>容斥原理计算结果：</h3>
-      <p>数学达标人数：${data.summary.math}</p>
-      <p>语文达标人数：${data.summary.chinese}</p>
-      <p>英语达标人数：${data.summary.english}</p>
-      <p>三科达标人数：${data.summary.all}</p>
-    `;
-
+    /* ECharts 柱状图 */
     const chart = echarts.init(document.getElementById("chart"));
     chart.setOption({
       title: { text: "达标组合人数分布" },
       tooltip: {},
-      xAxis: { type: "category", data: data.chartData.labels },
+      xAxis: { type: "category", data: json.data.map((d) => d.combo) },
       yAxis: { type: "value" },
-      series: [{ name: "人数", type: "bar", data: data.chartData.values }]
+      series: [{ name: "人数", type: "bar", data: json.data.map((d) => d.count) }],
     });
-
   } catch (err) {
     console.error(err);
     resultDiv.innerHTML = "<p>上传或分析时出错，请重试。</p>";
