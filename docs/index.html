@@ -21,15 +21,7 @@
     <div id="chart" style="width:100%;height:500px;margin-top:20px;"></div>
   </div>
 
-  <script>
-
-    fileInput.addEventListener("change", () => {
-      fileNameSpan.textContent = fileInput.files[0]?.name || "";
-    });
-
-    const API_URL = "https://grade-analyzer.vercel.app/api/analyze"; // ← 确保是你的 Vercel 后端地址
-  </script>
-
+  <!-- 仅引入 script.js，不要在 HTML 里重复声明变量 -->
   <script src="script.js"></script>
 </body>
 </html>
