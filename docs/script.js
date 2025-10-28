@@ -1,17 +1,16 @@
+const uploadBtn = document.getElementById("uploadBtn");
 const fileInput = document.getElementById("fileInput");
 const fileNameSpan = document.getElementById("fileName");
-const uploadBtn = document.getElementById("uploadBtn");
 const resultDiv = document.getElementById("result");
 
-// 替换为你自己的 Vercel 后端地址
+// ← 这里写你的 Vercel 后端完整地址
 const API_URL = "https://grade-analyzer.vercel.app/api/analyze";
 
-// 显示选择文件的名称
+// 显示选择文件的文件名
 fileInput.addEventListener("change", () => {
   fileNameSpan.textContent = fileInput.files[0]?.name || "";
 });
 
-// 上传并分析
 uploadBtn.addEventListener("click", async () => {
   const file = fileInput.files[0];
   if (!file) {
@@ -31,7 +30,7 @@ uploadBtn.addEventListener("click", async () => {
     });
 
     if (!res.ok) {
-      throw new Error(`HTTP 错误! 状态: ${res.status}`);
+      throw new Error("服务器返回错误: " + res.status);
     }
 
     const data = await res.json();
@@ -68,6 +67,6 @@ uploadBtn.addEventListener("click", async () => {
     });
   } catch (err) {
     console.error(err);
-    resultDiv.innerHTML = `<p>上传或分析时出错：${err.message}</p>`;
+    resultDiv.innerHTML = "<p>上传或分析时出错，请重试。</p>";
   }
 });
