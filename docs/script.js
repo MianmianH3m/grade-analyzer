@@ -1,62 +1,46 @@
-const uploadBtn = document.getElementById("uploadBtn");
-const fileInput = document.getElementById("fileInput");
-const resultDiv = document.getElementById("result");
+import express from "express";
+import multer from "multer";
+import cors from "cors";
+import xlsx from "xlsx";
 
-const API_URL = "https://grade-analyzer.vercel.app/"; // ← 替换成你的后端网址
+const app = express();
 
-uploadBtn.addEventListener("click", async () => {
-  const file = fileInput.files[0];
-  if (!file) {
-    alert("请先选择一个 Excel 文件！");
-    return;
-  }
+// ✅ 允许所有来源访问
+app.use(cors({
+  origin: "*"  // "*" 表示任何域名都可以访问
+}));
 
-  const formData = new FormData();
-  formData.append("file", file);
+const upload = multer({ storage: multer.memoryStorage() });
 
-  resultDiv.innerHTML = "<p>正在上传并分析，请稍候...</p>";
-
+// 上传并分析接口
+app.post("/api/analyze", upload.single("file"), (req, res) => {
   try {
-    const res = await fetch(API_URL, {
-      method: "POST",
-      body: formData
+    const buffer = req.file.buffer;
+    const workbook = xlsx.read(buffer, { type: "buffer" });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const data = xlsx.utils.sheet_to_json(sheet);
+
+    // 示例统计逻辑（你可以改成完整分析）
+    const mathCount = data.filter(d => d.数学 >= 60).length;
+    const chineseCount = data.filter(d => d.语文 >= 60).length;
+    const englishCount = data.filter(d => d.英语 >= 60).length;
+
+    res.json({
+      summary: {
+        math: mathCount,
+        chinese: chineseCount,
+        english: englishCount,
+        all: data.filter(d => d.数学 >= 60 && d.语文 >= 60 && d.英语 >= 60).length
+      },
+      chartData: {
+        labels: ["数学", "语文", "英语", "三科达标"],
+        values: [mathCount, chineseCount, englishCount, data.filter(d => d.数学 >= 60 && d.语文 >= 60 && d.英语 >= 60).length]
+      }
     });
-
-    const data = await res.json();
-    console.log(data);
-
-    if (!data.summary) {
-      resultDiv.innerHTML = "<p>分析失败，请检查文件格式。</p>";
-      return;
-    }
-
-    // 显示统计信息
-    resultDiv.innerHTML = `
-      <h3>容斥原理计算结果：</h3>
-      <p>数学达标人数：${data.summary.math}</p>
-      <p>语文达标人数：${data.summary.chinese}</p>
-      <p>英语达标人数：${data.summary.english}</p>
-      <p>三科达标人数：${data.summary.all}</p>
-    `;
-
-    // 绘制图表
-    const chart = echarts.init(document.getElementById("chart"));
-    chart.setOption({
-      title: { text: "达标组合人数分布" },
-      tooltip: {},
-      xAxis: { type: "category", data: data.chartData.labels },
-      yAxis: { type: "value" },
-      series: [
-        {
-          name: "人数",
-          type: "bar",
-          data: data.chartData.values
-        }
-      ]
-    });
-  } catch (err) {
-    console.error(err);
-    resultDiv.innerHTML = "<p>上传或分析时出错，请重试。</p>";
+  } catch (e) {
+    res.status(500).json({ status: "error", message: e.message });
   }
 });
+
+app.listen(3000, () => console.log("Server running on port 3000"));
 
