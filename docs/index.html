@@ -13,12 +13,24 @@
 
     <div class="upload-box">
       <input type="file" id="fileInput" accept=".xls,.xlsx" />
-      <button id="uploadBtn">上传并分析</button>
+      <span id="fileName"></span>
+      <button id="uploadBtn" type="button">上传并分析</button>
     </div>
 
     <div id="result"></div>
     <div id="chart" style="width:100%;height:500px;margin-top:20px;"></div>
   </div>
+
+  <script>
+    const fileInput = document.getElementById("fileInput");
+    const fileNameSpan = document.getElementById("fileName");
+
+    fileInput.addEventListener("change", () => {
+      fileNameSpan.textContent = fileInput.files[0]?.name || "";
+    });
+
+    const API_URL = "https://grade-analyzer.vercel.app/api/analyze"; // ← 确保是你的 Vercel 后端地址
+  </script>
 
   <script src="script.js"></script>
 </body>
