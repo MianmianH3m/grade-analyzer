@@ -2,7 +2,7 @@ const uploadBtn = document.getElementById("uploadBtn");
 const fileInput = document.getElementById("fileInput");
 const resultDiv = document.getElementById("result");
 
-const API_URL = "https://grade-analyzer.vercel.app/api/analyze"; // ← 替换成你的后端网址
+const API_URL = "https://grade-analyzer.vercel.app/"; // ← 替换成你的后端网址
 
 uploadBtn.addEventListener("click", async () => {
   const file = fileInput.files[0];
@@ -59,3 +59,4 @@ uploadBtn.addEventListener("click", async () => {
     resultDiv.innerHTML = "<p>上传或分析时出错，请重试。</p>";
   }
 });
+
