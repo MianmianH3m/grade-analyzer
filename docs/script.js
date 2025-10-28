@@ -7,8 +7,7 @@ fileInput.addEventListener("change", () => {
   fileNameSpan.textContent = fileInput.files[0]?.name || "";
 });
 
-const API_URL = "https://grade-analyzer.vercel.app/api/analyze";
-
+const API_URL = 'https://consultants-rank-steel-inclusion.trycloudflare.com';
 uploadBtn.addEventListener("click", async () => {
   const file = fileInput.files[0];
   if (!file) return alert("请先选择 Excel 文件！");
