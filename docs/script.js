@@ -1,3 +1,4 @@
+const API_URL = "https://grade-analyzer.vercel.app/api/analyze"; // ← Vercel 后端
 const uploadBtn = document.getElementById("uploadBtn");
 const fileInput = document.getElementById("fileInput");
 const resultDiv = document.getElementById("result");
@@ -64,3 +65,4 @@ uploadBtn.addEventListener("click", async () => {
     resultDiv.innerHTML = `<p>上传或分析时出错：${err.message}</p>`;
   }
 });
+
