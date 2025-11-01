@@ -1,7 +1,10 @@
 {
   "version": 2,
+  "functions": {
+    "api/analyze.cjs": { "maxDuration": 10 }
+  },
   "routes": [
-    { "src": "/api/(.*)",  "dest": "/api/analyze.cjs" },
-    { "src": "/(.*)",      "dest": "/docs/$1" }
+    { "src": "/api/analyze", "dest": "/api/analyze.cjs" },
+    { "src": "/(.*)",       "dest": "/docs/$1" }
   ]
 }
