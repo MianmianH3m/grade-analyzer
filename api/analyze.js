@@ -44,4 +44,6 @@ app.post('/api/analyze', upload.single('file'), (req, res) => {
   }
 });
 
-export default app;
+app.listen(3001, () => {
+  console.log('本地接口 http://localhost:3001/api/analyze');
+});
