@@ -1,12 +1,10 @@
 {
   "version": 2,
   "functions": {
-    "api/analyze.js": { "runtime": "vercel-node" }
+    "api/analyze.js": { "maxDuration": 10 }
   },
   "routes": [
-    { "src": "/api/analyze", "dest": "/api/analyze.js" },
-    { "src": "/api/classes", "dest": "/api/analyze.js" },
-    { "src": "/api/analyze/(.*)", "dest": "/api/analyze.js" },
-    { "src": "/(.*)", "dest": "/docs/$1" }
+    { "src": "/api/(.*)", "dest": "/api/analyze.js" },
+    { "src": "/(.*)", "dest": "/public/$1" }
   ]
 }
